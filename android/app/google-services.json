@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "407195560409",
+    "project_id": "myrecipe-3b3d8",
+    "storage_bucket": "myrecipe-3b3d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407195560409:android:0b44de89137782399551c8",
+        "android_client_info": {
+          "package_name": "com.priscilla.flutterscainitiativeproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "407195560409-63jf6dqlmceqhtehclb0ub1ojmq8el9p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnUvXTiQwz3J0aUPoCD3A8UnH1pGP_J7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407195560409-63jf6dqlmceqhtehclb0ub1ojmq8el9p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

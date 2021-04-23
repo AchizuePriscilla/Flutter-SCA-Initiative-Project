@@ -1,7 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterscainitiativeproject/screens/login_screen.dart';
+import 'package:flutterscainitiativeproject/routes/route_generator.dart';
+import 'package:flutterscainitiativeproject/routes/route_names.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -12,10 +16,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter SCA Initiative Project',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginScreen(),
+      routes: RouteNames.routes,
+      initialRoute: RouteNames.welcomeScreen,
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }

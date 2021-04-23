@@ -1,17 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterscainitiativeproject/routes/route_names.dart';
+import 'package:flutterscainitiativeproject/screens/home_screen.dart';
 import 'package:flutterscainitiativeproject/shared/constants.dart';
 import 'package:flutterscainitiativeproject/shared/widgets/button.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _auth = FirebaseAuth.instance;
-
+  final _firestore = FirebaseFirestore.instance;
+  String firstName;
+  String lastName;
   String email;
   String password;
   @override
@@ -40,9 +44,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
                   Hero(
                     tag: 'logo',
                     child: Container(
@@ -62,6 +63,31 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextField(
                                 textAlign: TextAlign.center,
                                 decoration: kTextFieldDecoration.copyWith(
+                                    hintText: "Enter your First Name"),
+                                onChanged: (value) {
+                                  firstName = value;
+                                },
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02,
+                              ),
+                              TextField(
+                                textAlign: TextAlign.center,
+                                decoration: kTextFieldDecoration.copyWith(
+                                    hintText: "Enter your Last Name"),
+                                onChanged: (value) {
+                                  lastName = value;
+                                },
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02,
+                              ),
+                              TextField(
+                                keyboardType: TextInputType.emailAddress,
+                                textAlign: TextAlign.center,
+                                decoration: kTextFieldDecoration.copyWith(
                                     hintText: "Enter your Email"),
                                 onChanged: (value) {
                                   email = value;
@@ -72,8 +98,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     MediaQuery.of(context).size.height * 0.02,
                               ),
                               TextField(
-                                textAlign: TextAlign.center,
                                 obscureText: true,
+                                textAlign: TextAlign.center,
                                 decoration: kTextFieldDecoration.copyWith(
                                     hintText: "Enter your Password"),
                                 onChanged: (value) {
@@ -86,15 +112,24 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               Button(
                                 buttonColor: Colors.green,
-                                buttonText: 'Log in',
+                                buttonText: 'Register',
                                 onPressed: () async {
+                                  _firestore.collection('initials').add({
+                                    'first-name': firstName,
+                                    'last-name': lastName
+                                  });
                                   try {
-                                    final user =
-                                        await _auth.signInWithEmailAndPassword(
+                                    final newUser = await _auth
+                                        .createUserWithEmailAndPassword(
                                             email: email, password: password);
-                                    if (user != null) {
-                                      Navigator.pushNamed(
-                                          context, RouteNames.homeScreen);
+                                    if (newUser != null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomeScreen(
+                                                  firstName: firstName,
+                                                )),
+                                      );
                                     }
                                   } catch (e) {
                                     print(e);
@@ -102,11 +137,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
@@ -116,22 +151,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-// class AlignedText extends StatelessWidget {
-//   final String text;
-//   const AlignedText({@required this.text});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Align(
-//       alignment: Alignment.centerLeft,
-//       child: Text(
-//         text,
-//         style: TextStyle(
-//           color: Colors.blueGrey[700],
-//           fontSize: 18,
-//         ),
-//       ),
-//     );
-//   }
-// }
