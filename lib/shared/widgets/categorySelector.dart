@@ -12,7 +12,8 @@ class _CategorySelectorState extends State<CategorySelector> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.16,
+      padding: EdgeInsets.only(left: 10),
+      height: 80,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: categories.length,
@@ -24,7 +25,7 @@ class _CategorySelectorState extends State<CategorySelector> {
                 });
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 child: CategoryTile(
                   containerColor: index == selectedIndex
                       ? Colors.green
