@@ -9,8 +9,11 @@ class HomeScreenTab extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          Column(
-            children: [RecipeCard(), RecipeCard(), RecipeCard()],
+          CategorySelector(),
+          Expanded(
+            child: ListView(
+              children: [RecipeCard(), RecipeCard(), RecipeCard()],
+            ),
           ),
           // ListView(
           //   shrinkWrap: true,

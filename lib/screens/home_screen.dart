@@ -65,24 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            CategorySelector(),
-            Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        tabList[tabIndex],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        child: tabList[tabIndex],
         bottom: true,
       ),
       bottomNavigationBar: BottomNavigationBar(
