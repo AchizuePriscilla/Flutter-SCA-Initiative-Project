@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterscainitiativeproject/routes/route_names.dart';
-import 'package:flutterscainitiativeproject/screens/homeScreen_tab.dart';
-import 'package:flutterscainitiativeproject/screens/home_screen.dart';
-import 'package:flutterscainitiativeproject/screens/login_screen.dart';
-import 'package:flutterscainitiativeproject/screens/profile_screen.dart';
-import 'package:flutterscainitiativeproject/screens/recipes_screen.dart';
-import 'package:flutterscainitiativeproject/screens/register_screen.dart';
-import 'package:flutterscainitiativeproject/screens/search_screen.dart';
-import 'package:flutterscainitiativeproject/screens/welcome_screen.dart';
+import 'package:flutterscainitiativeproject/screens/views/home_view_tab.dart';
+import 'package:flutterscainitiativeproject/screens/views/home_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/login_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/profile_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/recipes_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/register_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/search_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/welcome_view.dart';
 
 class RouteGenerator {
 //Routes will be generated with this function

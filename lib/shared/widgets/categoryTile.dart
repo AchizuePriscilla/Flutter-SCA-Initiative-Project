@@ -12,12 +12,12 @@ class CategoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.05,
+      height: 30,
       width: MediaQuery.of(context).size.width * 0.4,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30), color: containerColor),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 13),
+        padding: EdgeInsets.only(top: 13, left: 10, right: 10, bottom: 10),
         child: Text(
           text != null ? text : "",
           textAlign: TextAlign.center,

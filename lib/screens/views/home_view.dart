@@ -1,16 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterscainitiativeproject/screens/homeScreen_tab.dart';
-import 'package:flutterscainitiativeproject/screens/profile_screen.dart';
-import 'package:flutterscainitiativeproject/screens/recipes_screen.dart';
-import 'package:flutterscainitiativeproject/screens/search_screen.dart';
-import 'package:flutterscainitiativeproject/shared/widgets/categorySelector.dart';
+import 'package:flutterscainitiativeproject/arguments/home_view_argument.dart';
+import 'package:flutterscainitiativeproject/screens/views/home_view_tab.dart';
+import 'package:flutterscainitiativeproject/screens/views/profile_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/recipes_view.dart';
+import 'package:flutterscainitiativeproject/screens/views/search_view.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String firstName;
-
-  const HomeScreen({this.firstName});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -45,13 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context).settings.arguments as HomeViewArguments;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text("Hi ${widget.firstName ?? widget.firstName}",
+        title: Text("Hi ${args.firstname ?? args.firstname}",
             style: TextStyle(
                 // letterSpacing: 0.8,
                 color: Colors.black,
@@ -65,20 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: tabIndex == 0
-                  ? SliverChildListDelegate([
-                      CategorySelector(),
-                      tabList[tabIndex],
-                    ])
-                  : SliverChildListDelegate([
-                      tabList[tabIndex],
-                    ]),
-            ),
-          ],
-        ),
+        child: tabList[tabIndex],
         bottom: true,
       ),
       bottomNavigationBar: BottomNavigationBar(

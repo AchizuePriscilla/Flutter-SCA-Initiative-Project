@@ -1,6 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterscainitiativeproject/arguments/home_view_argument.dart';
+import 'package:flutterscainitiativeproject/enums/auth_result_status.dart';
 import 'package:flutterscainitiativeproject/routes/route_names.dart';
+import 'package:flutterscainitiativeproject/screens/views/home_view.dart';
+import 'package:flutterscainitiativeproject/services/auth_exception_handler.dart';
+import 'package:flutterscainitiativeproject/services/firebase_auth_helper.dart';
 import 'package:flutterscainitiativeproject/shared/constants.dart';
 import 'package:flutterscainitiativeproject/shared/widgets/button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -12,9 +17,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
+
   bool showSpinner = false;
   String email;
   String password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,28 +95,36 @@ class _LoginScreenState extends State<LoginScreen> {
                                       MediaQuery.of(context).size.height * 0.05,
                                 ),
                                 Button(
-                                  buttonColor: Colors.green,
-                                  buttonText: 'Log in',
-                                  onPressed: () async {
-                                    setState(() {
-                                      showSpinner = true;
-                                    });
-                                    try {
-                                      final user = await _auth
-                                          .signInWithEmailAndPassword(
-                                              email: email, password: password);
-                                      if (user != null) {
-                                        Navigator.pushNamed(
-                                            context, RouteNames.homeScreen);
-                                      }
+                                    buttonColor: Colors.green,
+                                    buttonText: 'Log in',
+                                    onPressed: () async {
+                                      setState(() {
+                                        showSpinner = true;
+                                      });
+                                      final status = await FirebaseAuthHelper()
+                                          .login(email: email, pass: password);
                                       setState(() {
                                         showSpinner = false;
                                       });
-                                    } catch (e) {
-                                      print(e);
-                                    }
-                                  },
-                                ),
+                                      if (status ==
+                                          AuthResultStatus.successful) {
+                                        Navigator.pushNamed(
+                                            context, RouteNames.homeScreen
+                                            // arguments: HomeViewArguments(firstName)
+                                            );
+
+                                        // Navigator.pushAndRemoveUntil(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             HomeScreen()),
+                                        //     (r) => false);
+                                      } else {
+                                        final errorMsg = AuthExceptionHandler
+                                            .generateExceptionMessage(status);
+                                        _showAlertDialog(errorMsg);
+                                      }
+                                    }),
                               ],
                             )
                           ],
@@ -125,23 +140,19 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  Future _showAlertDialog(errorMsg) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              'Login Failed',
+              style: TextStyle(color: Colors.black),
+            ),
+            content: Text(errorMsg),
+          );
+        });
+  }
 }
-
-// class AlignedText extends StatelessWidget {
-//   final String text;
-//   const AlignedText({@required this.text});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Align(
-//       alignment: Alignment.centerLeft,
-//       child: Text(
-//         text,
-//         style: TextStyle(
-//           color: Colors.blueGrey[700],
-//           fontSize: 18,
-//         ),
-//       ),
-//     );
-//   }
-// }

@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterscainitiativeproject/arguments/home_view_argument.dart';
+import 'package:flutterscainitiativeproject/enums/auth_result_status.dart';
 import 'package:flutterscainitiativeproject/routes/route_names.dart';
-import 'package:flutterscainitiativeproject/screens/home_screen.dart';
+import 'package:flutterscainitiativeproject/screens/views/home_view.dart';
+import 'package:flutterscainitiativeproject/services/auth_exception_handler.dart';
+import 'package:flutterscainitiativeproject/services/firebase_auth_helper.dart';
 import 'package:flutterscainitiativeproject/shared/constants.dart';
 import 'package:flutterscainitiativeproject/shared/widgets/button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -125,24 +129,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       'first-name': firstName,
                                       'last-name': lastName
                                     });
-                                    try {
-                                      final newUser = await _auth
-                                          .createUserWithEmailAndPassword(
-                                              email: email, password: password);
-                                      if (newUser != null) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => HomeScreen(
-                                                    firstName: firstName,
-                                                  )),
-                                        );
-                                      }
-                                      setState(() {
-                                        showSpinner = false;
-                                      });
-                                    } catch (e) {
-                                      print(e);
+                                    final status = await FirebaseAuthHelper()
+                                        .createAccount(
+                                            email: email, pass: password);
+                                    setState(() {
+                                      showSpinner = false;
+                                    });
+                                    if (status == AuthResultStatus.successful) {
+                                      Navigator.pushNamed(
+                                          context, RouteNames.homeScreen,
+                                          arguments:
+                                              HomeViewArguments(firstName));
+                                    } else {
+                                      final errorMsg = AuthExceptionHandler
+                                          .generateExceptionMessage(status);
+                                      _showAlertDialog(errorMsg);
                                     }
                                   },
                                 ),
@@ -160,5 +161,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  Future _showAlertDialog(errorMsg) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Login Failed',
+              style: TextStyle(color: Colors.black),
+            ),
+            content: Text(errorMsg),
+          );
+        });
   }
 }
