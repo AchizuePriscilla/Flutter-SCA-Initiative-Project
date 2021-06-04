@@ -16,8 +16,7 @@ class CategoryTile extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.4,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30), color: containerColor),
-      child: Padding(
-        padding: EdgeInsets.only(top: 13, left: 10, right: 10, bottom: 10),
+      child: Center(
         child: Text(
           text != null ? text : "",
           textAlign: TextAlign.center,

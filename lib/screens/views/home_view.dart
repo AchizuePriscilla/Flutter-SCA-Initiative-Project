@@ -1,11 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterscainitiativeproject/arguments/home_view_argument.dart';
 import 'package:flutterscainitiativeproject/screens/views/home_view_tab.dart';
 import 'package:flutterscainitiativeproject/screens/views/profile_view.dart';
 import 'package:flutterscainitiativeproject/screens/views/recipes_view.dart';
 import 'package:flutterscainitiativeproject/screens/views/search_view.dart';
+import 'dart:developer';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,16 +15,31 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _auth = FirebaseAuth.instance;
   User loggedinUser;
+  final initialsRef = FirebaseFirestore.instance.collection('initials');
+  dynamic document;
+  String firstname;
 
   void getCurrentUser() {
     try {
       final user = _auth.currentUser;
       if (user != null) {
         loggedinUser = user;
-        print(loggedinUser.email);
+
+        print(loggedinUser.uid);
       }
     } catch (e) {}
   }
+
+  // getUserById() async {
+  //   await initialsRef.doc(loggedinUser.uid).get().then((doc) {
+  //     setState(() {
+  //       document = doc.data();
+  //       firstname = document["first-name"].toString();
+  //     });
+  //   });
+  //   print(document);
+  //   print(document["first-name"].toString());
+  // }
 
   int tabIndex = 0;
   List<Widget> tabList;
@@ -32,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getCurrentUser();
+    // getUserById();
     tabList = [
       HomeScreenTab(),
       RecipesScreen(),
@@ -42,20 +58,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context).settings.arguments as HomeViewArguments;
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text("Hi ${args.firstname ?? args.firstname}",
-            style: TextStyle(
-                // letterSpacing: 0.8,
-                color: Colors.black,
-                fontSize: 32,
-                fontWeight: FontWeight.w700)),
+        title: Row(
+          children: [
+            Text(
+              "Hi",
+              style: TextStyle(
+                  // letterSpacing: 0.8,
+                  color: Colors.black,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700),
+            ),
+            SizedBox(
+              width: 7,
+            ),
+            FutureBuilder<DocumentSnapshot>(
+                future: initialsRef.doc(loggedinUser.uid).get(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text('User');
+                  }
+                  firstname = snapshot.data["first-name"].toString();
+
+                  return Text(
+                    firstname,
+                    style: TextStyle(
+                        // letterSpacing: 0.8,
+                        color: Colors.black,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w700),
+                  );
+                })
+          ],
+        ),
         actions: [
           CircleAvatar(
             radius: 25,

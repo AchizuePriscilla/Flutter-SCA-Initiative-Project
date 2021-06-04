@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterscainitiativeproject/arguments/home_view_argument.dart';
 import 'package:flutterscainitiativeproject/enums/auth_result_status.dart';
 import 'package:flutterscainitiativeproject/routes/route_names.dart';
-import 'package:flutterscainitiativeproject/screens/views/home_view.dart';
 import 'package:flutterscainitiativeproject/services/auth_exception_handler.dart';
 import 'package:flutterscainitiativeproject/services/firebase_auth_helper.dart';
 import 'package:flutterscainitiativeproject/shared/constants.dart';
@@ -17,13 +15,20 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final initialsRef = FirebaseFirestore.instance.collection('initials');
   bool showSpinner = false;
   String firstName;
   String lastName;
   String email;
   String password;
+  String userID;
+  User loggedinUser;
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +74,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Column(
                               children: [
                                 TextField(
+                                  controller: firstNameController,
+                                  textCapitalization: TextCapitalization.words,
                                   textAlign: TextAlign.center,
                                   decoration: kTextFieldDecoration.copyWith(
                                       hintText: "Enter your First Name"),
@@ -81,6 +88,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       MediaQuery.of(context).size.height * 0.02,
                                 ),
                                 TextField(
+                                  controller: lastNameController,
+                                  textCapitalization: TextCapitalization.words,
                                   textAlign: TextAlign.center,
                                   decoration: kTextFieldDecoration.copyWith(
                                       hintText: "Enter your Last Name"),
@@ -93,6 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       MediaQuery.of(context).size.height * 0.02,
                                 ),
                                 TextField(
+                                  controller: emailController,
                                   keyboardType: TextInputType.emailAddress,
                                   textAlign: TextAlign.center,
                                   decoration: kTextFieldDecoration.copyWith(
@@ -106,6 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       MediaQuery.of(context).size.height * 0.02,
                                 ),
                                 TextField(
+                                  controller: passwordController,
                                   obscureText: true,
                                   textAlign: TextAlign.center,
                                   decoration: kTextFieldDecoration.copyWith(
@@ -125,21 +136,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     setState(() {
                                       showSpinner = true;
                                     });
-                                    _firestore.collection('initials').add({
-                                      'first-name': firstName,
-                                      'last-name': lastName
-                                    });
+
                                     final status = await FirebaseAuthHelper()
                                         .createAccount(
                                             email: email, pass: password);
-                                    setState(() {
-                                      showSpinner = false;
-                                    });
+
                                     if (status == AuthResultStatus.successful) {
+                                      loggedinUser =
+                                          FirebaseAuth.instance.currentUser;
+                                      _firestore
+                                          .collection('initials')
+                                          .doc(loggedinUser.uid)
+                                          .set({
+                                        'first-name': firstName,
+                                        'last-name': lastName
+                                      });
+                                      firstNameController.clear();
+                                      lastNameController.clear();
+                                      emailController.clear();
+                                      passwordController.clear();
+                                      setState(() {
+                                        showSpinner = false;
+                                      });
+                                      print(firstName);
                                       Navigator.pushNamed(
-                                          context, RouteNames.homeScreen,
-                                          arguments:
-                                              HomeViewArguments(firstName));
+                                        context,
+                                        RouteNames.homeScreen,
+                                      );
                                     } else {
                                       final errorMsg = AuthExceptionHandler
                                           .generateExceptionMessage(status);

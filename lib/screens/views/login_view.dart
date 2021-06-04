@@ -1,6 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterscainitiativeproject/arguments/home_view_argument.dart';
 import 'package:flutterscainitiativeproject/enums/auth_result_status.dart';
 import 'package:flutterscainitiativeproject/routes/route_names.dart';
 import 'package:flutterscainitiativeproject/screens/views/home_view.dart';
@@ -16,11 +14,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _auth = FirebaseAuth.instance;
-
   bool showSpinner = false;
   String email;
   String password;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             Column(
                               children: [
                                 TextField(
+                                  controller: emailController,
+                                  keyboardType: TextInputType.emailAddress,
                                   textAlign: TextAlign.center,
                                   decoration: kTextFieldDecoration.copyWith(
                                       hintText: "Enter your Email"),
@@ -82,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       MediaQuery.of(context).size.height * 0.02,
                                 ),
                                 TextField(
+                                  controller: passwordController,
                                   textAlign: TextAlign.center,
                                   obscureText: true,
                                   decoration: kTextFieldDecoration.copyWith(
@@ -101,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       setState(() {
                                         showSpinner = true;
                                       });
+
                                       final status = await FirebaseAuthHelper()
                                           .login(email: email, pass: password);
                                       setState(() {
@@ -108,10 +110,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       });
                                       if (status ==
                                           AuthResultStatus.successful) {
+                                        emailController.clear();
+                                        passwordController.clear();
                                         Navigator.pushNamed(
-                                            context, RouteNames.homeScreen
-                                            // arguments: HomeViewArguments(firstName)
-                                            );
+                                            context, RouteNames.homeScreen);
 
                                         // Navigator.pushAndRemoveUntil(
                                         //     context,
